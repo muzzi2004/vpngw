@@ -10,7 +10,7 @@ services:
       - NET_ADMIN
       - NET_RAW
     command: >
-      udp2raw -c -l 127.0.0.1:${SERVER_UDP_PORT} -r ${SERVERURL}:${FAKETCP_PORT} -k '${UDP2RAW_KEY}' --raw-mode faketcp --cipher-mode aes128cbc --auth-mode simple --fix-gro -a
+      udp2raw -c -l 127.0.0.1:${SERVER_UDP_PORT} -r ${SERVERURL}:${FAKETCP_PORT} -k ${UDP2RAW_KEY} --raw-mode faketcp --cipher-mode aes128cbc --auth-mode simple --fix-gro -a
     restart: unless-stopped
 
   wg-client:
@@ -26,7 +26,6 @@ services:
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./wg0.conf:/config/wg_confs/wg0.conf:ro
       - ./config:/config
     depends_on:
       - udp2raw

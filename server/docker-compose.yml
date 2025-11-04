@@ -5,14 +5,11 @@ services:
     network_mode: host
     cap_add:
       - NET_ADMIN
-      - SYS_MODULE
-      - NET_RAW
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=${TZ}
     volumes:
-      - ./wg0.conf:/config/wg_confs/wg0.conf:ro
       - ./config:/config
     restart: unless-stopped
 
@@ -25,8 +22,9 @@ services:
     network_mode: host
     cap_add:
       - NET_ADMIN
+      - NET_RAW
     command: >
-      udp2raw -s -l0.0.0.0:${FAKETCP_PORT} -r127.0.0.1:${SERVER_UDP_PORT} -k '${UDP2RAW_KEY}' --raw-mode faketcp --cipher-mode aes128cbc --auth-mode simple --fix-gro -a
+      udp2raw -s -l0.0.0.0:${FAKETCP_PORT} -r127.0.0.1:${SERVER_UDP_PORT} -k ${UDP2RAW_KEY} --raw-mode faketcp --cipher-mode aes128cbc --auth-mode simple --fix-gro -a
     depends_on:
       - wireguard
     restart: unless-stopped
