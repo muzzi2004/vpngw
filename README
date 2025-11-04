@@ -1,0 +1,28 @@
+
+Сервер:
+cd poc-wg-udp2raw/server
+docker compose build
+docker compose up -d
+
+Проверка запуска:
+sudo ss -tlnp | grep :443
+docker logs -f udp2raw-server
+
+Добавление клиентов без перывания работы других клиентов
+отредактировать файл /config/wg_confs/wg0.conf (который монтируется из ./wg0.conf) и перезагрузить только WireGuard-процесс внутри контейнера, без docker restart:
+docker exec wg-server wg syncconf wg0 <(wg-quick strip wg0)
+
+либо docker exec -it wg-server wg set wg0 peer <PublicKey> allowed-ips <IP>/32, но тогда при рестарте wg, этот пир не будет сохранен.
+
+
+
+Клиент
+cd poc-wg-udp2raw/client
+docker compose build
+docker compose up -d
+
+Проверка:
+docker logs -f udp2raw-client
+
+
+
